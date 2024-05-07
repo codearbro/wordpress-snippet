@@ -1,0 +1,265 @@
+ global $current_user;
+  get_currentuserinfo();
+$adminEmail ="";
+$adminEmail = strval($current_user->user_email);
+
+?>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+  integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<div class="card text-white bg-secondary mb-3" style="max-width: 25rem;">
+  <div class="card-header">Log In Details</div>
+  <div class="card-body">
+    <h5 class="card-title"><?php echo '<th>Name: </th><td>' . $current_user->user_firstname.' '.$current_user->user_lastname. "</td>\n";?></h5>
+	  <h5 class="card-title"><?php echo '<th>Email: </th><td>' . $current_user->user_email."</td>\n";?></h5>
+	   <h5 class="card-title"><?php echo '<th>User Id: </th><td>' . $current_user->ID."</td>\n";?></h5>
+  </div>
+</div>
+
+
+<?php
+$curl = curl_init();
+curl_setopt_array($curl, array(
+  CURLOPT_URL => 'https://accounts.zoho.com/oauth/v2/token?refresh_token=1000.4c962c4ceb61a44c116fbf01b18bb321.4603f9358395b903b683e89a79a861f3&client_id=1000.NMABFEF4BYNL6XYF1K1P6PSY89DA5F&client_secret=ce463e330b7c943e7864196719dc7ac00899c57060&grant_type=refresh_token',
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_ENCODING => '',
+  CURLOPT_MAXREDIRS => 10,
+  CURLOPT_TIMEOUT => 0,
+  CURLOPT_FOLLOWLOCATION => true,
+  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+  CURLOPT_CUSTOMREQUEST => 'POST',
+));
+$response = curl_exec($curl);
+curl_close($curl);
+// echo $response;
+$data1 = json_decode($response);
+$token = "";
+$token = "Zoho-oauthtoken ".$data1->access_token;
+// echo "Token".$token;
+if($token != null)
+{
+$curl1 = curl_init();
+curl_setopt_array($curl1, array(
+  CURLOPT_URL => 'https://creator.zoho.com/api/v2.1/dylanlz_miamiwatersports/employee-management/report/Employee_Details?criteria=Personal_Email.contains(%22'.$adminEmail.'%22)',
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_ENCODING => '',
+  CURLOPT_MAXREDIRS => 10,
+  CURLOPT_TIMEOUT => 0,
+  CURLOPT_FOLLOWLOCATION => true,
+  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+  CURLOPT_CUSTOMREQUEST => 'GET',
+  CURLOPT_HTTPHEADER => array(
+    'Authorization: '.$token.'',
+    'Cookie: 442b5845d7=372d5ec2cf2a37611cf067406ca73193; ZCNEWLIVEUI=true; _zcsr_tmp=661b5f68-eb7e-443b-b70b-1c9e43ceded9; zccpn=661b5f68-eb7e-443b-b70b-1c9e43ceded9'
+  ),
+));
+$response1 = curl_exec($curl1);
+curl_close($curl1);
+// echo "</br>Data".$response1;
+$data2 = json_decode($response1, true);	
+	echo $data2->code;
+// Iterate through each entry and extract the email
+foreach ($data2['data'] as $entry) {
+    $Id = $entry['ID'];
+	
+	//////////get employee data  //////////
+	$curlEmp = curl_init();
+curl_setopt_array($curlEmp, array(
+  CURLOPT_URL => 'https://creator.zoho.com/api/v2/dylanlz_miamiwatersports/employee-management/report/Employee_Details/'.$Id.'',
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_ENCODING => '',
+  CURLOPT_MAXREDIRS => 10,
+  CURLOPT_TIMEOUT => 0,
+  CURLOPT_FOLLOWLOCATION => true,
+  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+  CURLOPT_CUSTOMREQUEST => 'GET',
+  CURLOPT_HTTPHEADER => array(
+    'Authorization: '.$token.'',
+    'Cookie: 442b5845d7=372d5ec2cf2a37611cf067406ca73193; ZCNEWLIVEUI=true; _zcsr_tmp=661b5f68-eb7e-443b-b70b-1c9e43ceded9; zccpn=661b5f68-eb7e-443b-b70b-1c9e43ceded9'
+  ),
+));
+$responseEmp = curl_exec($curlEmp);
+curl_close($curlEmp);
+// echo "</br>Data".$responseEmp;
+	///////////variables for php/////
+$data3 = json_decode($responseEmp, true);
+// Extracting variables
+$employeeHandbook = $data33['data']['Employee_Handbook'];
+$liveryCourse = $data3['data']['Livery_Course'];
+$loans = $data3['data']['Loans'];
+$birthAbroadFS545 = $data3['data']['Birth_Abroad_FS545'];
+$liveryCourseExp = $data3['data']['Livery_Course_Exp'];
+$cpr = $data3['data']['CPR'];
+$permanentResidentCard = $data3['data']['Permanent_Resident_Card'];
+$drugTestResults = $data3['data']['Drug_Test_Results'];
+$photo = $data3['data']['Photo'];
+$captainLicenseTypes = $data3['data']['Captain_License_Types'];
+$employeeHandbookDate = $data3['data']['Employee_Handbook_Date'];
+$militaryDepID = $data3['data']['Military_Dep_ID'];
+$displayName = $data3['data']['Name']['display_value'];
+$prefix = $data3['data']['Name']['prefix'];
+$lastName = $data3['data']['Name']['last_name'];
+$suffix = $data3['data']['Name']['suffix'];
+$firstName = $data3['data']['Name']['first_name'];
+$usCitizenIDExp = $data3['data']['US_Citizen_ID_Exp'];
+$militaryCard = $data3['data']['Military_Card'];
+$employeeStatus = $data3['data']['Employee_Status'];
+$birthCertificate = $data3['data']['Birth_Certificate'];
+$currentI9 = $data3['data']['Current_I_9'];
+$usCitizenID = $data3['data']['US_Citizen_ID'];
+$id = $data3['data']['ID'];
+$endorsements = $data3['data']['Endorsements'];
+$coastGuardCard = $data3['data']['Coast_Guard_Card'];
+$driversLicense = $data3['data']['Drivers_License'];
+$docsExpired = $data3['data']['Docs_Expired'];
+$employmentAuthDoc = $data3['data']['Employment_Auth_Doc'];
+$voterCardExp = $data3['data']['Voter_Card_Exp'];
+$currentW4Date = $data3['data']['Current_W_4_Date'];
+$workPermitFront = $data3['data']['Work_Permit_Front'];
+$currentW4 = $data3['data']['Current_W_4'];
+$permanentResidentCardExp = $data3['data']['Permanent_Resident_Card_Exp'];
+$employmentAuthDocExp = $data3['data']['Employment_Auth_Doc_Exp'];
+$schoolID = $data3['data']['School_ID'];
+$currentI9Date = $data3['data']['Current_I_9_Date'];
+$nativeTribalDocC = $data3['data']['Native_Tribal_Doc_C'];
+$usPassport = $data3['data']['US_Passport'];
+$cprExp = $data3['data']['CPR_Exp'];
+$foreginPassport = $data3['data']['Foregin_Passport'];
+$militaryCardExp = $data3['data']['Military_Card_Exp'];
+$emergencyContact = $data3['data']['Emergency_Contact'];
+$injuryAccidentHandling = $data3['data']['Injury_Accident_Handling'];
+$coastGuardIDExp = $data3['data']['Coast_Guard_ID_Exp'];
+$drugTestDate = $data3['data']['Drug_Test_Date'];
+$fccExp = $data3['data']['FCC_Exp'];
+$residentCitizenIDExp = $data3['data']['Resident_Citizen_ID_Exp'];
+$docsExpiring = $data3['data']['Docs_Expiring'];
+$usPassportExp = $data3['data']['US_Passport_Exp'];
+$boatLicense = $data3['data']['Boat_License'];
+$captainLicense = $data3['data']['Captain_License'];
+$captainsLicenseExp = $data3['data']['Captains_License_Exp'];
+$boatLicenseExp = $data3['data']['Boat_License_Exp'];
+$docsValid = $data3['data']['Docs_Valid'];
+	
+$addressLine12 = $data3['data']['Present_Address']['address_line_12'];
+$displayValue = $data3['data']['Present_Address']['display_value'];
+$addressLine22 = $data3['data']['Present_Address']['address_line_22'];
+$stateProvince2 = $data3['data']['Present_Address']['state_province2'];
+$postalCode2 = $data3['data']['Present_Address']['postal_code2'];
+$districtCity2 = $data3['data']['Present_Address']['district_city2'];
+$country2 = $data3['data']['Present_Address']['country2'];
+$currentDirectDeposit = $data3['data']['Current_Direct_Deposit'];
+$nickName = $data3['data']['Nick_Name'];
+$foreginPassportExp = $data3['data']['Foregin_Passport_Exp'];
+$militaryDepIDExp = $data3['data']['Military_Dep_ID_Exp'];
+$endorsementsExp = $data3['data']['Endorsements_Exp'];
+$fileUpload = $data3['data']['File_upload'];
+$socialSecurityCard = $data3['data']['Social_Security_Card'];
+$schoolIDExp = $data3['data']['School_ID_Exp'];
+$injuryAccidentHandlingDate = $data3['data']['Injury_Accident_Handling_Date'];
+$officialDateOfBirth = $data3['data']['Official_Date_of_Birth'];
+$driversLicenceExp = $data3['data']['Drivers_Licence_Exp'];
+$residentCitizenID = $data3['data']['Resident_Citizen_ID'];
+$fccOperatorLicense = $data3['data']['FCC_Operator_License'];
+$nativeTribalDocExp = $data3['data']['Native_Tribal_Doc_Exp'];
+$personalEmail = $data3['data']['Personal_Email'];
+$twic = $data3['data']['TWIC'];
+$stateIssuedIDExp = $data3['data']['State_Issued_ID_Exp'];
+$ssnCard = $data3['data']['SSN_Card'];
+$ssnCardExp = $data3['data']['SSN_Card_Exp'];
+$nativeTribalDoc = $data3['data']['Native_Tribal_Doc'];
+$exp = $data3['data']['Exp'];
+$stateIssuedID = $data3['data']['State_Issued_ID'];
+$birthReportDS1350 = $data3['data']['Birth_Report_DS1350'];
+$currentDirectDepositDate = $data3['data']['Current_Direct_Deposit_Date'];
+$voterCard = $data3['data']['Voter_Card'];
+
+// Printing some values as an example
+// echo "First Name: $firstName\n";
+// echo "Last Name: $lastName\n";
+// echo "US Passport: $usPassport\n";
+			?>
+<div class="card text-white bg-secondary mb-3" style="max-width: 250rem;">
+  <div class="card-header">Personal Information</div>
+  <div class="card-body">
+    <h5 class="card-title"><?php echo '<th>DOB: </th><td>' . $officialDateOfBirth. "</td>\n";?></h5>
+	  <h5 class="card-title"><?php echo '<th>Nick Name: </th><td>' . $nickName."</td>\n";?></h5>
+	   <h5 class="card-title"><?php echo '<th>Present Address: </th><td>' . $displayValue."</td>\n";?></h5>
+	  <h5 class="card-title"><?php echo '<th>ID: </th><td>' . $id."</td>\n";?></h5>
+  </div>
+</div>
+
+<div class="card text-white bg-secondary mb-3" style="max-width: 25rem;">
+  <div class="card-header">Work Experience</div>
+  <div class="card-body">
+    <h5 class="card-title"><?php echo '<th>Name: </th><td>' . $current_user->user_firstname.' '.$current_user->user_lastname. "</td>\n";?></h5>
+	  <h5 class="card-title"><?php echo '<th>Email: </th><td>' . $current_user->user_email."</td>\n";?></h5>
+	   <h5 class="card-title"><?php echo '<th>User Id: </th><td>' . $current_user->ID."</td>\n";?></h5>
+  </div>
+</div>
+<div class="card text-white bg-secondary mb-3" style="max-width: 25rem;">
+  <div class="card-header">Certifications</div>
+  <div class="card-body">
+    <h5 class="card-title"><?php echo '<th>Boat License: </th><td>' . $current_user->user_firstname.' '.$current_user->user_lastname. "</td>\n";?></h5>
+	  <h5 class="card-title"><?php echo '<th>Boat License Exp: </th><td>' . $current_user->user_email."</td>\n";?></h5>
+	   <h5 class="card-title"><?php echo '<th>Livery Course: </th><td>' . $current_user->ID."</td>\n";?></h5>
+	  <h5 class="card-title"><?php echo '<th>Livery Course Exp: </th><td>' . $current_user->ID."</td>\n";?></h5>
+	  <h5 class="card-title"><?php echo '<th>CPR: </th><td>' . $current_user->ID."</td>\n";?></h5>
+	  <h5 class="card-title"><?php echo '<th>CPR Exp: </th><td>' . $current_user->ID."</td>\n";?></h5>
+	  <h5 class="card-title"><?php echo '<th>FCC Operator License: </th><td>' . $current_user->ID."</td>\n";?></h5>
+	  <h5 class="card-title"><?php echo '<th>FCC Exp: </th><td>' . $current_user->ID."</td>\n";?></h5>
+	  <h5 class="card-title"><?php echo '<th>Captain License: </th><td>' . $current_user->ID."</td>\n";?></h5>
+	  <h5 class="card-title"><?php echo '<th>Captains License Exp: </th><td>' . $current_user->ID."</td>\n";?></h5>
+	   <h5 class="card-title"><?php echo '<th>Captain License Types: </th><td>' . $current_user->ID."</td>\n";?></h5>
+	   <h5 class="card-title"><?php echo '<th>Endorsements: </th><td>' . $current_user->ID."</td>\n";?></h5>
+	   <h5 class="card-title"><?php echo '<th>Endorsements Exp: </th><td>' . $current_user->ID."</td>\n";?></h5>
+	   <h5 class="card-title"><?php echo '<th>Medical: </th><td>' . $current_user->ID."</td>\n";?></h5>
+	   <h5 class="card-title"><?php echo '<th>Drug Test Results: </th><td>' . $current_user->ID."</td>\n";?></h5>
+	   <h5 class="card-title"><?php echo '<th>Drug Test Date: </th><td>' . $current_user->ID."</td>\n";?></h5>
+  </div>
+</div>
+<div class="card text-white bg-secondary mb-3" style="max-width: 25rem;">
+  <div class="card-header">Medical</div>
+  <div class="card-body">
+    <h5 class="card-title"><?php echo '<th>Name: </th><td>' . $current_user->user_firstname.' '.$current_user->user_lastname. "</td>\n";?></h5>
+	  <h5 class="card-title"><?php echo '<th>Email: </th><td>' . $current_user->user_email."</td>\n";?></h5>
+	   <h5 class="card-title"><?php echo '<th>User Id: </th><td>' . $current_user->ID."</td>\n";?></h5>
+  </div>
+</div>
+<div class="card text-white bg-secondary mb-3" style="max-width: 25rem;">
+  <div class="card-header">Hiring Document</div>
+  <div class="card-body">
+    <h5 class="card-title"><?php echo '<th>Name: </th><td>' . $current_user->user_firstname.' '.$current_user->user_lastname. "</td>\n";?></h5>
+	  <h5 class="card-title"><?php echo '<th>Email: </th><td>' . $current_user->user_email."</td>\n";?></h5>
+	   <h5 class="card-title"><?php echo '<th>User Id: </th><td>' . $current_user->ID."</td>\n";?></h5>
+  </div>
+</div>
+
+<div class="card text-white bg-secondary mb-3" style="max-width: 25rem;">
+  <div class="card-header">List A</div>
+  <div class="card-body">
+    <h5 class="card-title"><?php echo '<th>Name: </th><td>' . $current_user->user_firstname.' '.$current_user->user_lastname. "</td>\n";?></h5>
+	  <h5 class="card-title"><?php echo '<th>Email: </th><td>' . $current_user->user_email."</td>\n";?></h5>
+	   <h5 class="card-title"><?php echo '<th>User Id: </th><td>' . $current_user->ID."</td>\n";?></h5>
+  </div>
+</div>
+<div class="card text-white bg-secondary mb-3" style="max-width: 25rem;">
+  <div class="card-header">List B</div>
+  <div class="card-body">
+    <h5 class="card-title"><?php echo '<th>Name: </th><td>' . $current_user->user_firstname.' '.$current_user->user_lastname. "</td>\n";?></h5>
+	  <h5 class="card-title"><?php echo '<th>Email: </th><td>' . $current_user->user_email."</td>\n";?></h5>
+	   <h5 class="card-title"><?php echo '<th>User Id: </th><td>' . $current_user->ID."</td>\n";?></h5>
+  </div>
+</div>
+<div class="card text-white bg-secondary mb-3" style="max-width: 25rem;">
+  <div class="card-header">List C</div>
+  <div class="card-body">
+    <h5 class="card-title"><?php echo '<th>Name: </th><td>' . $current_user->user_firstname.' '.$current_user->user_lastname. "</td>\n";?></h5>
+	  <h5 class="card-title"><?php echo '<th>Email: </th><td>' . $current_user->user_email."</td>\n";?></h5>
+	   <h5 class="card-title"><?php echo '<th>User Id: </th><td>' . $current_user->ID."</td>\n";?></h5>
+  </div>
+</div>
+			<?php
+		}
+}
+
+
+
